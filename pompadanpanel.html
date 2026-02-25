@@ -13,8 +13,8 @@
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #f4f7f6; color: #333; font-size: 11px; padding-bottom: 80px;}
         
-        .navbar { display: flex; justify-content: space-around; background: #34495e; padding: 12px 0; position: sticky; top: 0; z-index: 999; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .navbar a { color: white; text-decoration: none; font-weight: bold; font-size: 13px; text-align: center; }
+        .navbar { background: #34495e; padding: 15px; color: white; font-weight: bold; position: sticky; top: 0; z-index: 999; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
+.btn-back { position: absolute; left: 15px; color: white; text-decoration: none; font-size: 10px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 4px; letter-spacing: 0.5px; }
 
         .container { width: 100%; max-width: 900px; margin: auto; padding: 10px; }
 
@@ -98,9 +98,10 @@
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="#">⚙️ Kualitas – Pelaksanaan operasi instalasi sesuai SOP dan mutu produksi air</a>
-</nav>
+<div class="navbar">
+    <a href="index.html" class="btn-back">❮ KEMBALI</a>
+    <span style="flex: 1; text-align: center;">⚙️ Kualitas – Pelaksanaan operasi instalasi sesuai SOP dan mutu produksi air</span>
+</div>
 
 <div class="container">
     <div class="job-item">
