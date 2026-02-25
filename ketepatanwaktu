@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Laporan Tupoksi Operasional & Bahan Kimia</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+
+    <style>
+        /* CSS UTAMA */
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #f4f7f6; color: #333; font-size: 11px; padding-bottom: 80px;}
+        
+        .navbar { background: #2c3e50; padding: 15px; color: white; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 999; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .container { width: 100%; max-width: 900px; margin: auto; padding: 10px; }
+
+        .card { background: white; border: 1px solid #d1d8dd; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .card-header { padding: 10px 15px; background: #34495e; color: white; font-weight: bold; font-size: 12px; text-transform: uppercase; }
+        
+        .input-group { padding: 15px; border-bottom: 1px solid #f0f0f0; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-control { display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; color: #2c3e50; }
+        input[type="text"], input[type="date"] { padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; }
+
+        /* PHOTO GRID LAYOUT */
+        .grid-photo { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 10px; background: #fafafa; }
+        .photo-item { background: white; border: 1px solid #eee; padding: 8px; border-radius: 6px; display: flex; flex-direction: column; min-width: 0; }
+        .photo-label { font-size: 8.5px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; color: #7f8c8d; text-align: center; min-height: 24px; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
+        
+        .preview-box { width: 100%; aspect-ratio: 1/1; border: 1px dashed #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f9f9f9; }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+        .preview-box span { font-size: 8px; color: #ccc; }
+
+        .photo-actions { display: flex; gap: 4px; margin-top: 5px; }
+        .btn-action { flex: 1; padding: 8px; background: #f8f9fa; border: 1px solid #ccc; cursor: pointer; border-radius: 4px; font-size: 14px; }
+        
+        /* TEXTAREA KETERANGAN */
+        .input-desc { 
+            width: 100%; margin-top: 8px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+            font-size: 10px; background: #fffbe6; resize: vertical; min-height: 60px; font-family: inherit;
+        }
+
+        .actions { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .btn-primary { background: #27ae60; color: white; padding: 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-reset { color: #e74c3c; background: none; border: none; text-decoration: underline; cursor: pointer; padding: 10px; }
+
+        /* MODAL CAMERA */
+        #cam-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        #cam-video { width: 100%; height: 100%; object-fit: cover; }
+        .cam-ui { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: space-around; align-items: center; }
+        .shutter { width: 70px; height: 70px; background: white; border-radius: 50%; border: 5px solid #ccc; cursor: pointer; }
+
+        /* PRINT STYLES - PERBAIKAN TOTAL */
+        #print-area { display: none; }
+        @media print {
+            @page { size: A4; margin: 10mm; }
+            body { background: white !important; }
+            .navbar, .container, #cam-modal, .actions { display: none !important; }
+            
+            #print-area { display: block !important; width: 100%; }
+            .print-header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 15px; padding-bottom: 10px; }
+            
+            /* Kunci Grid 3 Kolom */
+            .print-grid { 
+                display: grid !important; 
+                grid-template-columns: repeat(3, 1fr) !important; 
+                gap: 10px !important; 
+                width: 100% !important;
+            }
+            
+            .print-box { 
+                border: 1px solid #ccc; 
+                padding: 6px; 
+                display: flex; 
+                flex-direction: column; 
+                page-break-inside: avoid; 
+                min-width: 0; /* Mencegah overflow */
+            }
+            
+            .print-img-wrap { 
+                width: 100%; 
+                height: 120px; 
+                background: #f0f0f0 !important; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                overflow: hidden; 
+                border-radius: 3px;
+            }
+            .print-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+            
+            .print-desc-label { font-weight: bold; font-size: 8px; margin-top: 6px; border-top: 1px solid #eee; padding-top: 3px; }
+            
+            /* Penanganan Teks Panjang & Paragraf */
+            .print-desc-content { 
+                font-size: 8.5px; 
+                line-height: 1.4;
+                white-space: pre-wrap; 
+                word-wrap: break-word; 
+                overflow-wrap: anywhere; /* Memutus kata super panjang */
+                text-align: left;
+                margin-top: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">PELAPORAN OPERASIONAL & BAHAN KIMIA (TUPOKSI)</div>
+
+<div class="container">
+    <div class="card">
+        <div class="input-group">
+            <div class="form-control">
+                <label>Tanggal Pelaksanaan</label>
+                <input type="date" id="doc-date" onchange="autoSave()">
+            </div>
+            <div class="form-control">
+                <label>Nama Petugas Piket</label>
+                <input type="text" id="doc-name" placeholder="Nama petugas..." oninput="autoSave()">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Dokumentasi Kerja & Keterangan Detail</div>
+        <div class="grid-photo">
+            <script>
+                const photoLabels = [
+                    "Bahan Kimia / Dosis", "Pembersihan IPA", "Pengurasan / Backwash",
+                    "Resapan / Sumur Intake", "Saluran Pengendapan", "Penerapan K3"
+                ];
+                photoLabels.forEach((label, i) => {
+                    document.write(`
+                        <div class="photo-item">
+                            <div class="photo-label">${label}</div>
+                            <div class="preview-box" id="prev-${i}"><span>No Photo</span></div>
+                            <div class="photo-actions">
+                                <button class="btn-action" onclick="openCam(${i})">📷</button>
+                                <button class="btn-action" onclick="document.getElementById('file-${i}').click()">📁</button>
+                            </div>
+                            <input type="file" id="file-${i}" accept="image/*" style="display:none" onchange="processFile(this, ${i})">
+                            <textarea class="input-desc" id="desc-${i}" placeholder="Keterangan..." oninput="autoSave()"></textarea>
+                        </div>
+                    `);
+                });
+            </script>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-primary" onclick="generatePrint()">🖨️ CETAK LAPORAN (PDF)</button>
+        <button class="btn-reset" onclick="resetForm()">Bersihkan Semua Data</button>
+    </div>
+</div>
+
+<div id="cam-modal">
+    <video id="cam-video" autoplay playsinline muted></video>
+    <div class="cam-ui">
+        <button onclick="closeCam()" style="color:white; background:none; border:none; font-size:16px;">Batal</button>
+        <button class="shutter" onclick="takeSnap()"></button>
+        <div style="width:40px;"></div>
+    </div>
+</div>
+
+<div id="print-area"></div>
+
+<script>
+    let activeIdx = null;
+    let stream = null;
+
+    // AUTO SAVE & LOAD
+    function autoSave() {
+        const data = {
+            date: document.getElementById('doc-date').value,
+            name: document.getElementById('doc-name').value,
+            photos: photoLabels.map((_, i) => document.getElementById(`prev-${i}`).querySelector('img')?.src || null),
+            descs: photoLabels.map((_, i) => document.getElementById(`desc-${i}`).value)
+        };
+        localStorage.setItem('lap_tupoksi_final_v3', JSON.stringify(data));
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem('lap_tupoksi_final_v3');
+        if (!saved) return;
+        const d = JSON.parse(saved);
+        document.getElementById('doc-date').value = d.date || '';
+        document.getElementById('doc-name').value = d.name || '';
+        d.descs?.forEach((val, i) => document.getElementById(`desc-${i}`).value = val);
+        d.photos?.forEach((src, i) => {
+            if (src) document.getElementById(`prev-${i}`).innerHTML = `<img src="${src}">`;
+        });
+    }
+
+    function resetForm() {
+        if(confirm("Hapus semua data?")) { localStorage.removeItem('lap_tupoksi_final_v3'); location.reload(); }
+    }
+
+    // KAMERA & FILE
+    async function openCam(idx) {
+        activeIdx = idx;
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            document.getElementById('cam-video').srcObject = stream;
+            document.getElementById('cam-modal').style.display = 'block';
+        } catch(e) { alert("Gagal akses kamera."); }
+    }
+
+    function takeSnap() {
+        const video = document.getElementById('cam-video');
+        const canvas = document.createElement('canvas');
+        canvas.width = 600; canvas.height = 600;
+        const size = Math.min(video.videoWidth, video.videoHeight);
+        canvas.getContext('2d').drawImage(video, (video.videoWidth-size)/2, (video.videoHeight-size)/2, size, size, 0, 0, 600, 600);
+        document.getElementById(`prev-${activeIdx}`).innerHTML = `<img src="${canvas.toDataURL('image/jpeg', 0.6)}">`;
+        closeCam(); autoSave();
+    }
+
+    function closeCam() {
+        if(stream) stream.getTracks().forEach(t => t.stop());
+        document.getElementById('cam-modal').style.display = 'none';
+    }
+
+    function processFile(input, idx) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const c = document.createElement('canvas');
+                c.width = 600; c.height = 600;
+                const min = Math.min(img.width, img.height);
+                c.getContext('2d').drawImage(img, (img.width-min)/2, (img.height-min)/2, min, min, 0, 0, 600, 600);
+                document.getElementById(`prev-${idx}`).innerHTML = `<img src="${c.toDataURL('image/jpeg', 0.6)}">`;
+                autoSave();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // FUNGSI CETAK
+    function generatePrint() {
+        const date = document.getElementById('doc-date').value;
+        const name = document.getElementById('doc-name').value;
+        if(!date || !name) return alert("Lengkapi Tanggal dan Nama!");
+
+        const displayDate = new Date(date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        
+        let photoHtml = '';
+        photoLabels.forEach((label, i) => {
+            const src = document.getElementById(`prev-${i}`).querySelector('img')?.src;
+            const desc = document.getElementById(`desc-${i}`).value || '-';
+            photoHtml += `
+                <div class="print-box">
+                    <div style="font-weight:bold; font-size:8.5px; margin-bottom:5px; text-transform:uppercase; text-align:center; min-height:22px; display:flex; align-items:center; justify-content:center;">${label}</div>
+                    <div class="print-img-wrap">
+                        ${src ? `<img src="${src}" class="print-img">` : '<span style="color:#ccc; font-size:8px;">No Photo</span>'}
+                    </div>
+                    <div class="print-desc-label">KETERANGAN:</div>
+                    <div class="print-desc-content">${desc}</div>
+                </div>`;
+        });
+
+        document.getElementById('print-area').innerHTML = `
+            <div class="print-page">
+                <div class="print-header">
+                    <h2 style="margin:0; font-size:16px;">LAPORAN TUPOKSI OPERASIONAL & BAHAN KIMIA</h2>
+                    <p style="margin:4px 0; font-size:10px; color:#444;">Tupoksi: Pelaporan Operasional dan Penggunaan Bahan Kimia Tepat Waktu</p>
+                </div>
+                <div style="margin-bottom:15px; font-size:10px; display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:5px;">
+                    <span><strong>Tanggal:</strong> ${displayDate}</span>
+                    <span><strong>Petugas:</strong> ${name.toUpperCase()}</span>
+                </div>
+                <div class="print-grid">${photoHtml}</div>
+                <div style="margin-top:20px; font-size:8px; border-top:1px solid #000; padding-top:10px; color:#777;">
+                    * Laporan digital DokKiner - Dicetak pada ${new Date().toLocaleString('id-ID')}
+                </div>
+            </div>`;
+        
+        setTimeout(() => { window.print(); }, 500);
+    }
+
+    window.onload = loadData;
+</script>
+</body>
+</html>
