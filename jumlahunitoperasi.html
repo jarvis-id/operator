@@ -13,7 +13,8 @@
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; font-size: 11px; padding-bottom: 80px;}
         
-        .navbar { background: #2c3e50; color: white; padding: 15px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .navbar { background: #2c3e50; color: white; padding: 15px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+.btn-back { position: absolute; left: 15px; color: white; text-decoration: none; font-size: 10px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 4px; letter-spacing: 0.5px; }
 
         .container { width: 100%; max-width: 900px; margin: auto; padding: 10px; }
 
@@ -74,7 +75,10 @@
 </head>
 <body>
 
-<div class="navbar">Kuantitas – Jumlah Unit dan Peralatan yang dioperasikan</div>
+<div class="navbar">
+    <a href="index.html" class="btn-back">❮ KEMBALI</a>
+    <span style="flex: 1; text-align: center;">Kuantitas – Jumlah Unit dan Peralatan yang dioperasikan</span>
+</div>
 
 <div class="container">
     <!-- INFO PETUGAS -->
