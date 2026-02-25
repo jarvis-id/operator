@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Laporan Tupoksi Operasional & Bahan Kimia</title>
+    <title>Laporan Operasional & Bahan Kimia</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2c3e50">
@@ -268,7 +268,7 @@
         document.getElementById('print-area').innerHTML = `
             <div class="print-page">
                 <div class="print-header">
-                    <h2 style="margin:0; font-size:16px;">LAPORAN TUPOKSI OPERASIONAL & BAHAN KIMIA</h2>
+                    <h2 style="margin:0; font-size:16px;">LAPORAN OPERASIONAL & BAHAN KIMIA</h2>
                     <p style="margin:4px 0; font-size:10px; color:#444;">Tupoksi: Pelaporan Operasional dan Penggunaan Bahan Kimia Tepat Waktu</p>
                 </div>
                 <div style="margin-bottom:15px; font-size:10px; display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:5px;">
