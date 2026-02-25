@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mengoperasikan Peralatan Mekanikal-Elektrikal</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#34495e">
+
+    <style>
+        /* CSS UTAMA */
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #f4f7f6; color: #333; font-size: 11px; padding-bottom: 80px;}
+        
+        .navbar { display: flex; justify-content: space-around; background: #34495e; padding: 12px 0; position: sticky; top: 0; z-index: 999; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .navbar a { color: white; text-decoration: none; font-weight: bold; font-size: 13px; text-align: center; }
+
+        .container { width: 100%; max-width: 900px; margin: auto; padding: 10px; }
+
+        .job-item { background: white; border: 1px solid #d1d8dd; border-radius: 8px; margin-bottom: 25px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
+        .header-main { padding: 10px 15px; background: #34495e; color: #fff; font-weight: bold; text-align: center; text-transform: uppercase; }
+        
+        .input-group { padding: 12px; border-bottom: 1px solid #f0f0f0; }
+        .form-control { margin-bottom: 10px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50; }
+        .date-input, .text-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; }
+
+        /* Photo Grid - DISESUAIKAN MENJADI 3 KOLOM */
+        .grid-content { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; /* 3 Kolom */
+            gap: 8px; 
+            padding: 10px; 
+            background: #fdfdfd; 
+        }
+        .column { 
+            padding: 8px 5px; 
+            border: 1px solid #eee; 
+            border-radius: 6px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            background: white; 
+        }
+        .col-title { 
+            font-size: 8.5px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            margin-bottom: 6px; 
+            text-align: center; 
+            color: #7f8c8d; 
+            height: 22px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .image-preview { width: 100%; aspect-ratio: 1/1; border: 1px dashed #ddd; border-radius: 4px; display: flex; justify-content: center; align-items: center; background: #fafafa; overflow: hidden; margin-top: 5px; position: relative;}
+        .image-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .image-preview span { color: #ccc; font-size: 8px; text-align: center; }
+        
+        .photo-actions { display: flex; gap: 3px; margin-bottom: 5px; width: 100%; }
+        .btn-photo { flex: 1; padding: 8px 0; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; background: #f8f9fa; }
+
+        .footer-section { padding: 12px; }
+        .footer-section textarea { width: 100%; min-height: 60px; padding: 10px; border: 1px solid #ccc; font-size: 11px; resize: none; border-radius: 4px; }
+
+        .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .btn-print { background: #27ae60; color: white; padding: 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-reset { background:none; border:none; color:#e74c3c; cursor:pointer; text-decoration:underline; padding: 10px; }
+
+        /* MODAL CAMERA */
+        #cam-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        #cam-video { width: 100%; height: 100%; object-fit: cover; }
+        .cam-controls { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: space-around; align-items: center; }
+        .btn-shutter { width: 70px; height: 70px; background: white; border-radius: 50%; border: 5px solid #ccc; cursor: pointer; }
+
+        /* PRINT STYLES - DISESUAIKAN MENJADI 3 KOLOM */
+        #print-area { display: none; }
+        @media print {
+            @page { size: A4; margin: 10mm; }
+            body { background: #fff !important; }
+            .navbar, .container, #cam-modal { display: none !important; }
+            #print-area { display: block !important; width: 100%; }
+            .print-page { page-break-after: always; }
+            .print-header { text-align: center; border-bottom: 2px solid #333; margin-bottom: 15px; padding-bottom: 10px; }
+            .print-info { margin-bottom: 15px; font-size: 11px; }
+            .print-grid { 
+                display: grid; 
+                grid-template-columns: 1fr 1fr 1fr; /* 3 Kolom di kertas */
+                gap: 10px; 
+            }
+            .print-box { border: 1px solid #ccc; padding: 5px; text-align: center; }
+            .print-img { width: 100%; height: 120px; object-fit: contain; background: #eee; margin-top: 5px; }
+            .print-footer { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="#">⚙️ Mengoperasikan Peralatan Mekanikal-Elektrikal</a>
+</nav>
+
+<div class="container">
+    <div class="job-item">
+        <div class="header-main">Formulir Laporan Harian</div>
+        
+        <div class="input-group">
+            <div class="form-control">
+                <label>Tanggal Pelaksanaan</label>
+                <input type="date" id="input-date" class="date-input" onchange="autoSave()">
+            </div>
+            <div class="form-control">
+                <label>Nama Petugas Piket</label>
+                <input type="text" id="input-name" class="text-input" placeholder="Masukkan nama petugas..." oninput="autoSave()">
+            </div>
+        </div>
+
+        <div class="grid-content">
+            <script>
+                const photoLabels = [
+                    "Pompa Distribusi", "Pompa Dosing 1", "Pompa Dosing 2", 
+                    "Panel Pompa 1", "Panel Pompa 2", "Panel Pompa 3"
+                ];
+                photoLabels.forEach((label, index) => {
+                    const id = index + 1;
+                    document.write(`
+                        <div class="column">
+                            <div class="col-title">${label}</div>
+                            <div class="photo-actions">
+                                <button class="btn-photo" onclick="openCustomCamera('preview-${id}')">📷</button>
+                                <button class="btn-photo" onclick="document.getElementById('file-${id}').click()">📁</button>
+                            </div>
+                            <input type="file" id="file-${id}" accept="image/*" style="display:none" onchange="processGalleryImg(this, 'preview-${id}')">
+                            <div class="image-preview" id="preview-${id}"><span>Belum ada foto</span></div>
+                        </div>
+                    `);
+                });
+            </script>
+        </div>
+
+        <div class="footer-section">
+            <label>Keterangan Tambahan / Catatan</label>
+            <textarea id="input-note" placeholder="Tuliskan catatan kondisi peralatan..." oninput="autoSave()"></textarea>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-print" onclick="generatePrint()">🖨️ Cetak ke PDF</button>
+        <button class="btn-reset" onclick="resetForm()">Bersihkan & Reset Form</button>
+    </div>
+</div>
+
+<div id="cam-modal">
+    <video id="cam-video" autoplay playsinline muted></video>
+    <div class="cam-controls">
+        <button onclick="closeCamera()" style="color:white; background:none; border:none; font-size:16px;">Batal</button>
+        <button class="btn-shutter" onclick="capturePhoto()"></button>
+        <div style="width:40px;"></div>
+    </div>
+</div>
+
+<div id="print-area"></div>
+
+<script>
+    let cameraStream = null;
+    let activePreviewId = null;
+    const PHOTO_KEYS = ["preview-1", "preview-2", "preview-3", "preview-4", "preview-5", "preview-6"];
+
+    function autoSave() {
+        const formData = {
+            date: document.getElementById('input-date').value,
+            picketName: document.getElementById('input-name').value,
+            note: document.getElementById('input-note').value,
+            photos: {}
+        };
+        PHOTO_KEYS.forEach(key => {
+            const img = document.getElementById(key).querySelector('img');
+            formData.photos[key] = img ? img.src : null;
+        });
+        localStorage.setItem('mekanik_elektrik_data', JSON.stringify(formData));
+    }
+
+    function loadSavedData() {
+        const saved = localStorage.getItem('mekanik_elektrik_data');
+        if (!saved) return;
+        const data = JSON.parse(saved);
+        document.getElementById('input-date').value = data.date || '';
+        document.getElementById('input-name').value = data.picketName || '';
+        document.getElementById('input-note').value = data.note || '';
+        if (data.photos) {
+            Object.keys(data.photos).forEach(key => {
+                if (data.photos[key]) document.getElementById(key).innerHTML = `<img src="${data.photos[key]}">`;
+            });
+        }
+    }
+
+    function resetForm() {
+        if (confirm("Hapus semua data?")) {
+            localStorage.removeItem('mekanik_elektrik_data');
+            location.reload();
+        }
+    }
+
+    async function openCustomCamera(pId) { 
+        activePreviewId = pId; 
+        try {
+            cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            document.getElementById('cam-video').srcObject = cameraStream;
+            document.getElementById('cam-modal').style.display = 'block';
+        } catch(e) { alert("Izin kamera ditolak."); }
+    }
+
+    function capturePhoto() {
+        const video = document.getElementById('cam-video');
+        const canvas = document.createElement('canvas');
+        canvas.width = 600; canvas.height = 600;
+        const ctx = canvas.getContext('2d');
+        const s = Math.min(video.videoWidth, video.videoHeight);
+        ctx.drawImage(video, (video.videoWidth-s)/2, (video.videoHeight-s)/2, s, s, 0, 0, 600, 600);
+        document.getElementById(activePreviewId).innerHTML = `<img src="${canvas.toDataURL('image/jpeg', 0.6)}">`;
+        closeCamera(); autoSave();
+    }
+
+    function closeCamera() { 
+        if(cameraStream) cameraStream.getTracks().forEach(t => t.stop());
+        document.getElementById('cam-modal').style.display = 'none'; 
+    }
+
+    function processGalleryImg(input, pId) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const c = document.createElement('canvas');
+                c.width = 600; c.height = 600;
+                const minSide = Math.min(img.width, img.height);
+                c.getContext('2d').drawImage(img, (img.width-minSide)/2, (img.height-minSide)/2, minSide, minSide, 0, 0, 600, 600);
+                document.getElementById(pId).innerHTML = `<img src="${c.toDataURL('image/jpeg', 0.6)}">`;
+                autoSave();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function generatePrint() {
+        const dateVal = document.getElementById('input-date').value;
+        const nameVal = document.getElementById('input-name').value;
+        if (!dateVal || !nameVal) return alert("Lengkapi data!");
+
+        const displayDate = new Date(dateVal).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        let photoHtml = '';
+        photoLabels.forEach((label, i) => {
+            const imgSrc = document.getElementById(`preview-${i+1}`).querySelector('img')?.src;
+            photoHtml += `
+                <div class="print-box">
+                    <div style="font-weight:bold; font-size:9px;">${label}</div>
+                    ${imgSrc ? `<img src="${imgSrc}" class="print-img">` : `<div class="print-img"></div>`}
+                </div>`;
+        });
+
+        document.getElementById('print-area').innerHTML = `
+            <div class="print-page">
+                <div class="print-header"><h2>LAPORAN MEKANIKAL & ELEKTRIKAL</h2></div>
+                <div class="print-info">
+                    <strong>Tanggal:</strong> ${displayDate} | <strong>Petugas:</strong> ${nameVal.toUpperCase()}
+                </div>
+                <div class="print-grid">${photoHtml}</div>
+                <div class="print-footer">
+                    <strong>Catatan Kondisi:</strong><br>
+                    <p style="white-space: pre-wrap; padding: 5px; border: 1px solid #eee;">${document.getElementById('input-note').value || '-'}</p>
+                </div>
+            </div>`;
+        setTimeout(() => { window.print(); }, 500);
+    }
+
+    window.onload = loadSavedData;
+</script>
+</body>
+</html>
