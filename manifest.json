@@ -1,7 +1,7 @@
 {
-  "name": "Dokumentasi Kinerja",
-  "short_name": "LapDok",
-  "description": "Dokumentasi Kinerja",
+  "name": "Laporan Kinerja Operator",
+  "short_name": "OPERATOR",
+  "description": "Laporan Kinerja Operator",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
