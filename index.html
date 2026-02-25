@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aplikasi Laporan Input Kinerja Operator</title>
+    
+    <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+    <link rel="apple-touch-icon" href="icon-512.png">
+
+    <style>
+        /* CSS DASAR */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background-color: #f4f7f6; 
+            color: #333; 
+            padding-bottom: 40px;
+        }
+        
+        /* HEADER/NAVBAR */
+        .navbar { 
+            background: #2c3e50; 
+            padding: 20px; 
+            color: white; 
+            text-align: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+            position: sticky; 
+            top: 0; 
+            z-index: 999;
+        }
+        .navbar h1 { 
+            font-size: 18px; 
+            margin-bottom: 5px; 
+            text-transform: uppercase;
+            line-height: 1.3;
+        }
+        .navbar p { 
+            font-size: 11px; 
+            color: #bdc3c7; 
+        }
+
+        /* KONTANER MENU */
+        .container { 
+            width: 100%; 
+            max-width: 600px; 
+            margin: 20px auto; 
+            padding: 10px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px;
+        }
+
+        /* KARTU MENU */
+        .menu-card { 
+            background: white; 
+            border-radius: 10px; 
+            display: flex; 
+            align-items: center; 
+            padding: 15px 20px; 
+            text-decoration: none; 
+            color: inherit; 
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05); 
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e0e6ed;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-card:active { transform: scale(0.98); }
+        .menu-card:hover { box-shadow: 0 5px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
+
+        /* BORDER KIRI BERWARNA */
+        .menu-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 6px;
+        }
+        .menu-1::before { background-color: #3498db; } /* Biru */
+        .menu-2::before { background-color: #16a085; } /* Teal */
+        .menu-3::before { background-color: #f39c12; } /* Orange */
+        .menu-4::before { background-color: #9b59b6; } /* Ungu */
+
+        /* IKON MENU */
+        .menu-icon { 
+            font-size: 30px; 
+            margin-right: 20px; 
+            width: 40px; 
+            text-align: center;
+        }
+
+        /* TEKS MENU */
+        .menu-text { flex: 1; }
+        .menu-title { font-size: 14px; font-weight: bold; color: #2c3e50; margin-bottom: 4px; }
+        .menu-desc { font-size: 11px; color: #7f8c8d; line-height: 1.3; }
+
+        /* PANAH */
+        .menu-arrow { font-size: 18px; color: #bdc3c7; }
+
+        /* FOOTER */
+        .footer { 
+            text-align: center; 
+            margin-top: 30px; 
+            font-size: 10px; 
+            color: #95a5a6; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h1>Aplikasi Laporan<br>Input Kinerja Operator</h1>
+        <p>Sistem Pelaporan Operasional Water Treatment</p>
+    </div>
+
+    <div class="container">
+        <!-- Menu 1 -->
+        <a href="ketepatanwaktu.html" class="menu-card menu-1">
+            <div class="menu-icon">📝</div>
+            <div class="menu-text">
+                <div class="menu-title">Operasional & Bahan Kimia</div>
+                <div class="menu-desc">Pelaporan penggunaan bahan kimia dan tugas operasional rutin.</div>
+            </div>
+            <div class="menu-arrow">❯</div>
+        </a>
+
+        <!-- Menu 2 -->
+        <a href="pemantauankualitas.html" class="menu-card menu-2">
+            <div class="menu-icon">💧</div>
+            <div class="menu-text">
+                <div class="menu-title">Kualitas & Kelancaran Air</div>
+                <div class="menu-desc">Pemantauan fisik kualitas air baku, pengendapan, hingga air hasil.</div>
+            </div>
+            <div class="menu-arrow">❯</div>
+        </a>
+
+        <!-- Menu 3 -->
+        <a href="jumlahunitoperasi.html" class="menu-card menu-3">
+            <div class="menu-icon">⚙️</div>
+            <div class="menu-text">
+                <div class="menu-title">Kuantitas Unit & Peralatan</div>
+                <div class="menu-desc">Pencatatan jumlah unit pompa dan instalasi yang dioperasikan.</div>
+            </div>
+            <div class="menu-arrow">❯</div>
+        </a>
+
+        <!-- Menu 4 -->
+        <a href="pompadanpanel.html" class="menu-card menu-4">
+            <div class="menu-icon">⚡</div>
+            <div class="menu-text">
+                <div class="menu-title">Mekanikal & Elektrikal</div>
+                <div class="menu-desc">Pengecekan panel, pompa distribusi, dosing, dan kesesuaian SOP.</div>
+            </div>
+            <div class="menu-arrow">❯</div>
+        </a>
+        
+        <div class="footer">
+            Versi Aplikasi 1.0.0 &copy; 2026 - Kinerja Operator
+        </div>
+    </div>
+
+    <!-- Script PWA / Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('Service Worker terdaftar dengan scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Pendaftaran Service Worker gagal:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
