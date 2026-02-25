@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kuantitas – Jumlah Unit dan Peralatan yang dioperasikan</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+
+    <style>
+        /* CSS DASAR */
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; font-size: 11px; padding-bottom: 80px;}
+        
+        .navbar { background: #2c3e50; color: white; padding: 15px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        .container { width: 100%; max-width: 900px; margin: auto; padding: 10px; }
+
+        .card { background: white; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e0e0e0; }
+        .card-header { background: #34495e; color: white; padding: 10px 15px; font-weight: bold; text-transform: uppercase; font-size: 12px; }
+        
+        .input-group { padding: 15px; }
+        .form-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+        .form-col { flex: 1; min-width: 140px; }
+        
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #444; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
+
+        /* TABLE KUANTITAS */
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
+        th { background: #f8f9fa; font-size: 10px; }
+        .qty-input { width: 60px; text-align: center; padding: 5px; }
+
+        /* PHOTO GRID 3 KOLOM */
+        .grid-content { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 10px; }
+        .photo-box { border: 1px solid #eee; padding: 8px; border-radius: 6px; text-align: center; background: #fff; }
+        .photo-label { font-size: 9px; font-weight: bold; margin-bottom: 5px; height: 25px; display: flex; align-items: center; justify-content: center; color: #555; line-height: 1.1; }
+        .image-preview { width: 100%; aspect-ratio: 1/1; border: 1px dashed #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: #fafafa; overflow: hidden; cursor: pointer; }
+        .image-preview img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* PHOTO ACTIONS BUTTON */
+        .photo-actions { display: flex; gap: 4px; margin-top: 5px; }
+        .btn-cam, .btn-file { flex: 1; padding: 8px 0; font-size: 16px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+        .btn-cam:hover, .btn-file:hover { background: #eee; }
+
+        /* ACTIONS */
+        .actions { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .btn-print { background: #27ae60; color: white; padding: 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-reset { color: #e74c3c; background: none; border: none; text-decoration: underline; cursor: pointer; }
+
+        /* MODAL CAMERA */
+        #cam-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        #cam-video { width: 100%; height: 100%; object-fit: cover; }
+        .cam-controls { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: space-around; align-items: center; }
+        .btn-shutter { width: 70px; height: 70px; background: white; border-radius: 50%; border: 5px solid #ccc; }
+
+        /* PRINT STYLE */
+        #print-area { display: none; }
+        @media print {
+            @page { size: A4; margin: 15mm 10mm; }
+            body { background: white; }
+            .navbar, .container, #cam-modal { display: none !important; }
+            #print-area { display: block !important; font-size: 12px; }
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            .print-table th, .print-table td { border: 1px solid #000; padding: 8px; }
+            .print-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
+            .print-photo-item { border: 1px solid #000; padding: 5px; text-align: center; }
+            .print-img { width: 100%; height: 120px; object-fit: contain; }
+            .header-print { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">Kuantitas – Jumlah Unit dan Peralatan yang dioperasikan</div>
+
+<div class="container">
+    <!-- INFO PETUGAS -->
+    <div class="card">
+        <div class="card-header">Informasi Umum</div>
+        <div class="input-group">
+            <div class="form-row">
+                <div class="form-col">
+                    <label>Tanggal Piket</label>
+                    <input type="date" id="doc-date" onchange="saveAll()">
+                </div>
+                <div class="form-col">
+                    <label>Nama Petugas</label>
+                    <input type="text" id="doc-name" placeholder="Nama lengkap..." oninput="saveAll()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KUANTITAS PERALATAN -->
+    <div class="card">
+        <div class="card-header">Kuantitas Unit yang Dioperasikan</div>
+        <div class="input-group">
+            <table>
+                <tr>
+                    <th>Jenis Peralatan</th>
+                    <th>Jumlah Unit Operasi</th>
+                </tr>
+                <tr>
+                    <td>Pompa Air Baku (Intake)</td>
+                    <td><input type="number" class="qty-input" id="qty-intake" oninput="saveAll()"> Unit</td>
+                </tr>
+                <tr>
+                    <td>Pompa Dosing (Kimia)</td>
+                    <td><input type="number" class="qty-input" id="qty-dosing" oninput="saveAll()"> Unit</td>
+                </tr>
+                <tr>
+                    <td>Pompa Distribusi</td>
+                    <td><input type="number" class="qty-input" id="qty-dist" oninput="saveAll()"> Unit</td>
+                </tr>
+                <tr>
+                    <td>Instalasi Pengolahan (IPA)</td>
+                    <td><input type="number" class="qty-input" id="qty-ipa" oninput="saveAll()"> Unit</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- DOKUMENTASI TUPOKSI -->
+    <div class="card">
+        <div class="card-header">Dokumentasi Pelaksanaan Tupoksi</div>
+        <div class="grid-content">
+            <script>
+                const labels = [
+                    "Pengoperasian IPA", 
+                    "Pompa Baku/Dosing", 
+                    "Pompa Distribusi", 
+                    "Alat Kelistrikan/Panel", 
+                    "Pengukuran Tekanan", 
+                    "Lingkungan IPA"
+                ];
+                labels.forEach((label, i) => {
+                    document.write(`
+                        <div class="photo-box">
+                            <div class="photo-label">${label}</div>
+                            <div class="image-preview" id="preview-${i}" onclick="openCam(${i})">
+                                <span>Ketuk Foto</span>
+                            </div>
+                            <div class="photo-actions">
+                                <button class="btn-cam" onclick="openCam(${i})" title="Ambil Kamera">📷</button>
+                                <button class="btn-file" onclick="document.getElementById('file-input-${i}').click()" title="Unggah File">📁</button>
+                            </div>
+                            <!-- Input File Tersembunyi -->
+                            <input type="file" id="file-input-${i}" accept="image/*" style="display:none" onchange="handleFileUpload(this, ${i})">
+                        </div>
+                    `);
+                });
+            </script>
+        </div>
+    </div>
+
+    <!-- KETERANGAN OPERASIONAL -->
+    <div class="card">
+        <div class="card-header">Keterangan & Pengawasan</div>
+        <div class="input-group">
+            <label>Catatan Pengawasan Lingkungan & Alat:</label>
+            <textarea id="doc-note" placeholder="Contoh: Kondisi manometer normal, area lingkungan bersih, panel aman..." oninput="saveAll()"></textarea>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-print" onclick="doPrint()">🖨️ Cetak Laporan Tupoksi</button>
+        <button class="btn-reset" onclick="resetData()">Hapus & Reset Form</button>
+    </div>
+</div>
+
+<!-- Kamera Modal -->
+<div id="cam-modal">
+    <video id="cam-video" autoplay playsinline muted></video>
+    <div class="cam-controls">
+        <button onclick="closeCam()" style="color:white; background:none; border:none;">Batal</button>
+        <button class="btn-shutter" onclick="takeSnap()"></button>
+        <div style="width:40px;"></div>
+    </div>
+</div>
+
+<div id="print-area"></div>
+
+<script>
+    let stream = null;
+    let activeId = null;
+
+    // --- LOGIKA AUTO SAVE (LOCAL STORAGE) ---
+    function saveAll() {
+        const data = {
+            date: document.getElementById('doc-date').value,
+            name: document.getElementById('doc-name').value,
+            qty: {
+                intake: document.getElementById('qty-intake').value,
+                dosing: document.getElementById('qty-dosing').value,
+                dist: document.getElementById('qty-dist').value,
+                ipa: document.getElementById('qty-ipa').value,
+            },
+            note: document.getElementById('doc-note').value,
+            photos: []
+        };
+        for(let i=0; i<6; i++) {
+            const img = document.getElementById(`preview-${i}`).querySelector('img');
+            data.photos.push(img ? img.src : null);
+        }
+        localStorage.setItem('tupoksi_ipa_db', JSON.stringify(data));
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem('tupoksi_ipa_db');
+        if(!saved) return;
+        const d = JSON.parse(saved);
+        document.getElementById('doc-date').value = d.date || '';
+        document.getElementById('doc-name').value = d.name || '';
+        document.getElementById('qty-intake').value = d.qty?.intake || '';
+        document.getElementById('qty-dosing').value = d.qty?.dosing || '';
+        document.getElementById('qty-dist').value = d.qty?.dist || '';
+        document.getElementById('qty-ipa').value = d.qty?.ipa || '';
+        document.getElementById('doc-note').value = d.note || '';
+        d.photos.forEach((src, i) => {
+            if(src) document.getElementById(`preview-${i}`).innerHTML = `<img src="${src}">`;
+        });
+    }
+
+    function resetData() {
+        if(confirm("Reset semua data laporan?")) {
+            localStorage.removeItem('tupoksi_ipa_db');
+            location.reload();
+        }
+    }
+
+    // --- LOGIKA KAMERA ---
+    async function openCam(id) {
+        activeId = id;
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            document.getElementById('cam-video').srcObject = stream;
+            document.getElementById('cam-modal').style.display = 'block';
+        } catch(e) { alert("Gagal akses kamera. Gunakan tombol 'File' untuk upload manual."); }
+    }
+
+    function takeSnap() {
+        const video = document.getElementById('cam-video');
+        const canvas = document.createElement('canvas');
+        canvas.width = 600; canvas.height = 600;
+        const s = Math.min(video.videoWidth, video.videoHeight);
+        canvas.getContext('2d').drawImage(video, (video.videoWidth-s)/2, (video.videoHeight-s)/2, s, s, 0, 0, 600, 600);
+        document.getElementById(`preview-${activeId}`).innerHTML = `<img src="${canvas.toDataURL('image/jpeg', 0.6)}">`;
+        closeCam(); saveAll();
+    }
+
+    function closeCam() {
+        if(stream) stream.getTracks().forEach(t => t.stop());
+        document.getElementById('cam-modal').style.display = 'none';
+    }
+
+    // --- LOGIKA UPLOAD FILE ---
+    function handleFileUpload(input, id) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 600;
+                canvas.height = 600;
+                const ctx = canvas.getContext('2d');
+
+                // Logika Center Crop agar gambar jadi kotak sempurna
+                const minSide = Math.min(img.width, img.height);
+                const sx = (img.width - minSide) / 2;
+                const sy = (img.height - minSide) / 2;
+
+                ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 600, 600);
+                
+                document.getElementById(`preview-${id}`).innerHTML = `<img src="${canvas.toDataURL('image/jpeg', 0.6)}">`;
+                saveAll();
+                input.value = ""; // Reset input file agar bisa upload file yang sama lagi
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // --- LOGIKA PRINT ---
+    function doPrint() {
+        const date = document.getElementById('doc-date').value;
+        const name = document.getElementById('doc-name').value;
+        if(!date || !name) return alert("Isi tanggal dan nama petugas!");
+
+        const dDate = new Date(date).toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+        
+        let pPhotos = '';
+        labels.forEach((l, i) => {
+            const src = document.getElementById(`preview-${i}`).querySelector('img')?.src;
+            pPhotos += `
+                <div class="print-photo-item">
+                    <div style="font-weight:bold; font-size:10px; margin-bottom:5px;">${l}</div>
+                    ${src ? `<img src="${src}" class="print-img">` : '<div style="height:120px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; font-size:8px; color:#ccc;">(Tanpa Foto)</div>'}
+                </div>`;
+        });
+
+        document.getElementById('print-area').innerHTML = `
+            <div class="header-print">
+                <h2 style="margin:0">LAPORAN TUPOKSI OPERASIONAL IPA</h2>
+                <p style="margin:5px 0">Dokumentasi Kinerja Harian Petugas Piket</p>
+            </div>
+            
+            <p><strong>Hari/Tanggal:</strong> ${dDate}<br>
+            <strong>Petugas Piket:</strong> ${name.toUpperCase()}</p>
+
+            <table class="print-table">
+                <thead>
+                    <tr><th colspan="2" style="background:#eee">I. KUANTITAS UNIT OPERASI</th></tr>
+                    <tr><th>Jenis Peralatan</th><th>Jumlah Unit</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Pompa Air Baku (Intake)</td><td>${document.getElementById('qty-intake').value || 0} Unit</td></tr>
+                    <tr><td>Pompa Dosing (Kimia)</td><td>${document.getElementById('qty-dosing').value || 0} Unit</td></tr>
+                    <tr><td>Pompa Distribusi</td><td>${document.getElementById('qty-dist').value || 0} Unit</td></tr>
+                    <tr><td>Instalasi Pengolahan (IPA)</td><td>${document.getElementById('qty-ipa').value || 0} Unit</td></tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top:20px;"><strong>II. DOKUMENTASI PELAKSANAAN TUPOKSI</strong></div>
+            <div class="print-grid">${pPhotos}</div>
+
+            <div style="margin-top:20px; border:1px solid #000; padding:10px;">
+                <strong>III. KETERANGAN & PENGAWASAN</strong><br>
+                <p style="white-space:pre-wrap; font-size:11px;">${document.getElementById('doc-note').value || '-'}</p>
+            </div>
+
+            <div style="margin-top:40px; display:flex; justify-content:space-between;">
+                <div style="text-align:center">Dicetak otomatis oleh<br>Sistem DokKiner</div>
+                <div style="text-align:center; border-top:1px solid #000; width:150px; margin-top:40px;">Tanda Tangan Petugas</div>
+            </div>
+        `;
+        
+        setTimeout(() => window.print(), 500);
+    }
+
+    window.onload = loadData;
+</script>
+</body>
+</html>
